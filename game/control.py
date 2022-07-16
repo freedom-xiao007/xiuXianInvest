@@ -8,6 +8,7 @@ from common import xiuxian_state
 from common import config
 from game import hero_ranking_list
 from game import play
+from game import card
 
 
 def start():
@@ -46,6 +47,12 @@ def start():
     play_info_group = pygame.sprite.Group()
     play_info_group.add(play_info)
     play_info_group.update()
+
+    # 卡牌详情展示
+    card_info = card.Card(samil_font)
+    card_info_group = pygame.sprite.Group()
+    card_info_group.add(card_info)
+    card_info_group.update()
 
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
@@ -97,6 +104,7 @@ def start():
 
         hero_ranking_group.draw(surface2)
         play_info_group.draw(surface2)
+        card_info_group.draw(surface2)
 
         screen.blit(surface2, (0, 0))
         pygame.display.flip()
