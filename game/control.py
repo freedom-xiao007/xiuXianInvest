@@ -5,12 +5,13 @@ import pygame
 import game.land
 from game import hero
 from common import xiuxian_state
+from common import config
 
 
 def start():
     pygame.init()
     fps = 60
-    win_size = (600, 600)
+    win_size = (config.WIN_WIDTH, config.WIN_HEIGHT)
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
 
@@ -27,7 +28,7 @@ def start():
 
     # 角色气运劫：角色开始移动，期间膨胀发送战斗
     hero_move_event = pygame.USEREVENT + 2
-    pygame.time.set_timer(hero_move_event, 1000 * 3)
+    pygame.time.set_timer(hero_move_event, 1000 * 10)
 
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
@@ -55,6 +56,7 @@ def start():
             screen.blit(five_element, type_pos)
 
         hero.Hero_groups.update()
+        hero.collide()
         hero.Hero_groups.draw(surface2)
 
         for item in hero.Heroes:

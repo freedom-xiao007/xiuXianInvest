@@ -10,7 +10,7 @@ from common import xiuxian_state
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, x: int, y: int, five_element: FiveElementType):
+    def __init__(self, index: int, x: int, y: int, five_element: FiveElementType):
         pygame.sprite.Sprite.__init__(self)
         self.radius = 15
         self.image = pygame.Surface((40, 40))
@@ -31,6 +31,7 @@ class Hero(pygame.sprite.Sprite):
         self.target_x = None
         self.target_y = None
         self.speed = 1
+        self.index = index
 
     def update(self):
         if self.is_moving:
@@ -38,18 +39,25 @@ class Hero(pygame.sprite.Sprite):
 
     def moving(self):
         x_direct = 1
-        if (self.rect.x - self.target_x) < 0:
+        if (self.target_x - self.rect.x) < 0:
             x_direct = -1
         y_direct = 1
-        if (self.rect.y - self.target_y) < 0:
+        if (self.target_y - self.rect.y) < 0:
             y_direct = -1
 
-        self.rect.x = self.rect.x + self.speed * x_direct
-        self.rect.y = self.rect.y + self.speed * y_direct
+        if self.rect.x == self.target_x and self.rect.y == self.target_y:
+            self.is_moving = False
+            return
+
+        if self.rect.x != self.target_x:
+            self.rect.x = self.rect.x + self.speed * x_direct
+        if self.rect.y != self.target_y:
+            self.rect.y = self.rect.y + self.speed * y_direct
+
         if self.rect.x < 0:
             self.rect.x = 0
         elif self.rect.x + self.radius > config.WIN_WIDTH:
-            self.rect.y = config.WIN_WIDTH - self.radius
+            self.rect.x = config.WIN_WIDTH - self.radius * 2
         if self.rect.y < 0:
             self.rect.y = 0
         elif self.rect.y + self.radius > config.WIN_HEIGHT:
@@ -91,6 +99,14 @@ class Hero(pygame.sprite.Sprite):
                 self.level = xiuxian_state.State[self.state]["level"]
                 break
 
+    def collide(self, grp):
+        if pygame.sprite.spritecollideany(self, grp):
+            target = pygame.sprite.spritecollideany(self, grp)
+            if target.collide_type == 'hero':
+                if self.index == target.index:
+                    return
+                # print("发生碰撞")
+
 
 def create_heroes():
     x_count = int(config.WIN_WIDTH / config.UNIT_LENGTH)
@@ -100,7 +116,7 @@ def create_heroes():
         for j in range(y_count):
             x = i * config.UNIT_LENGTH + 50
             y = j * config.UNIT_LENGTH + 75
-            list.append(Hero(x, y, five_element.get_random_five_element()))
+            list.append(Hero(i * y_count + j, x, y, five_element.get_random_five_element()))
     return list
 
 
@@ -108,9 +124,9 @@ def random_move():
     x_count = int(config.WIN_WIDTH / config.UNIT_LENGTH)
     y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
     for item in Heroes:
-        random_x = random.randint(0, x_count) * config.UNIT_LENGTH
-        random_y = random.randint(0, y_count) * config.UNIT_LENGTH
-        print("random x, y:", random_x, random_y)
+        random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 30
+        random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 55
+        print("random:", random_x, random_y)
         item.is_moving = True
         item.target_x = random_x
         item.target_y = random_y
@@ -119,6 +135,11 @@ def random_move():
 def update_exp():
     for item in Heroes:
         item.get_exp()
+
+
+def collide():
+    for item in Heroes:
+        item.collide(Hero_groups)
 
 
 Heroes = create_heroes()
