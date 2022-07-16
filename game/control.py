@@ -6,6 +6,7 @@ import game.land
 from game import hero
 from common import xiuxian_state
 from common import config
+from game import hero_ranking_list
 
 
 def start():
@@ -30,6 +31,12 @@ def start():
     hero_move_event = pygame.USEREVENT + 2
     pygame.time.set_timer(hero_move_event, 1000 * 10)
 
+    hero_window = pygame.Rect(0, 0, 200, 400)
+    hero_text = font.render("当前游戏修士排行榜", True, (255, 0, 0), (0, 0, 0))
+    hero_ranking = hero_ranking_list.HeroRankingList(font)
+    hero_ranking_group = pygame.sprite.Group()
+    hero_ranking_group.add(hero_ranking)
+
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
     while True:
@@ -40,6 +47,7 @@ def start():
                 hero.random_move()
             elif event.type == hero_exp_event:
                 hero.update_exp()
+                hero_ranking.update()
 
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
@@ -60,8 +68,6 @@ def start():
         hero.Hero_groups.draw(surface2)
 
         for item in hero.Heroes:
-            # pygame.draw.circle(surface2, item.five_element.value["color"], (item.x, item.y), 15, 2)
-
             five_element = font.render(item.five_element.value["type"], True, (255, 10, 10))
             type_pos = five_element.get_rect(center=(item.x, item.y))
             screen.blit(five_element, type_pos)
@@ -76,6 +82,9 @@ def start():
                 log_pos = five_element.get_rect(center=(item.x - 20, item.y - 30))
                 screen.blit(log, log_pos)
 
+        hero_ranking_group.draw(surface2)
+
+        screen.blit(hero_text, [hero_window.x, hero_window.y])
         screen.blit(surface2, (0, 0))
         pygame.display.flip()
         clock.tick(fps)
