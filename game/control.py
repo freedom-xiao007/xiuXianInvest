@@ -24,6 +24,8 @@ def start():
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
 
+    background = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\clouds-1282314__340.jpg")
+
     font = pygame.font.SysFont("SimHei", 20)
     samil_font = pygame.font.SysFont("SimHei", 10)
 
@@ -62,7 +64,6 @@ def start():
     reiki_event = pygame.USEREVENT + 5
     pygame.time.set_timer(reiki_event, 1000 * 5)
 
-    surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
 
     while True:
@@ -79,18 +80,18 @@ def start():
                 game.land.upgrade()
 
         screen.fill((255, 255, 255))
-        surface2.fill((255, 255, 255, 0))
+        screen.blit(background, (0, 0))
 
         if game.control.game_pre_stamp is not None:
-            pre_game(screen, surface2, font, clock, fps)
+            pre_game(screen, screen, font, clock, fps)
             continue
 
         if is_end():
-            end(screen, surface2, font, clock, fps)
+            game.control.game_pre_stamp = time.time()
             continue
 
         for item in game.land.Lands:
-            pygame.draw.rect(surface2, item.five_element.value["color"], (item.x, item.y, item.length, item.length), 3)
+            pygame.draw.rect(screen, item.five_element.value["color"], (item.x, item.y, item.length, item.length), 3)
 
             number = font.render(str(item.index), True, (255, 10, 10))
             text_pos = number.get_rect(center=(item.x + 15, item.y + 15))
@@ -107,14 +108,13 @@ def start():
         hero_ranking.update()
         hero.Hero_groups.update()
         hero.collide(samil_font)
-        hero.Hero_groups.draw(surface2)
+        hero.Hero_groups.draw(screen)
 
-        hero_ranking_group.draw(surface2)
-        play_info_group.draw(surface2)
-        card_info_group.draw(surface2)
-        operate_group.draw(surface2)
+        hero_ranking_group.draw(screen)
+        play_info_group.draw(screen)
+        card_info_group.draw(screen)
+        operate_group.draw(screen)
 
-        screen.blit(surface2, (0, 0))
         pygame.display.flip()
         clock.tick(fps)
 
@@ -127,6 +127,7 @@ def pre_game(screen, surface2, font, clock, fps):
         game.land.reset()
 
     text = [
+        get_win_hero(),
         "新的轮回开始了，当前阶段盲选，成功登顶后，奖励翻10倍",
         "输入 t + 角色编号进行投资吧",
         "当前角色编号范围：0-125",
@@ -177,7 +178,17 @@ def end(screen, surface2, font, clock, fps):
 
 
 def get_win_hero():
+    rank = {}
     for item in hero.Heroes:
-        if item.alive:
-            return item.name
-    return ""
+        if not item.alive:
+            continue
+        rank[item.state * 100 + item.level] = item
+
+    info = ""
+    top = 3
+    for key in sorted(rank.keys(), reverse=True):
+        if top < 0:
+            break
+        top = top - 1
+        info += "第%d名：%s %s;" % (top, rank[key].name, xiuxian_state.State[rank[key].state])
+    return info
