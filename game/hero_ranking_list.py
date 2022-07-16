@@ -7,7 +7,8 @@ from common import color
 class HeroRankingList(pygame.sprite.Sprite):
     def __init__(self, big_font, small_font):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((250, 400))
+        img = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\alpha.png").convert_alpha()
+        self.image = pygame.transform.scale(img, (250, 420))
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
@@ -17,13 +18,13 @@ class HeroRankingList(pygame.sprite.Sprite):
 
     def update(self):
         self.image.fill(color.BLUE1)
-        self.title = self.big_font.render("当前游戏修士排行榜", True, color.WHITE, color.GREEN1)
-        self.image.blit(self.title, [30, 2])
+        self.title = self.big_font.render("当前游戏修士排行榜", True, color.RED1)
+        self.image.blit(self.title, [10, 0])
 
         rank_info = get_rank_info()
         for i in range(len(rank_info)):
-            t = self.small_font.render(str(i + 1) + " " + rank_info[i], True, color.WHITE, color.BLUE1)
-            self.image.blit(t, [10, 26 * (i + 1)])
+            t = self.small_font.render(str(i + 1) + " " + rank_info[i], True, color.BLACK)
+            self.image.blit(t, [10, 27 * (i + 1)])
 
 
 def get_rank_info():

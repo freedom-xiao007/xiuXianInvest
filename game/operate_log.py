@@ -1,20 +1,22 @@
 import pygame.sprite
+from common import color
 
 
 class OperateLog(pygame.sprite.Sprite):
-    def __init__(self, font):
+    def __init__(self, big_font, small_font):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((250, 400))
+        img = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\alpha.png").convert_alpha()
+        self.image = pygame.transform.scale(img, (250, 420))
         self.rect = self.image.get_rect()
         self.rect.x = 1655
         self.rect.y = 450
-        self.font = font
+        self.big_font = big_font
+        self.small_font = small_font
         self.update()
 
     def update(self):
-        self.image.fill((0, 0, 0))
-        title = self.font.render("玩家交互与操作日志", True, (255, 0, 0), (0, 0, 0))
-        self.image.blit(title, [40, 5])
+        title = self.big_font.render("玩家交互与操作日志", True, color.RED1)
+        self.image.blit(title, [10, 0])
 
         info = [
             "洪荒不断轮回，选择中意的角色",
@@ -32,5 +34,5 @@ class OperateLog(pygame.sprite.Sprite):
             "如：d23.3 对区域23使用地形卡",
         ]
         for i in range(len(info)):
-            t = self.font.render(info[i], True, (255, 0, 0), (0, 0, 0))
-            self.image.blit(t, [10, 25 * (i + 1)])
+            t = self.small_font.render(info[i], True, color.BLACK)
+            self.image.blit(t, [10, 27 * (i + 1)])

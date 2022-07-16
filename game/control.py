@@ -45,20 +45,20 @@ def start():
     # 玩家排行和教程显示
     play_info_event = pygame.USEREVENT + 4
     pygame.time.set_timer(play_info_event, 1000 * 10)
-    play_info = play.PlayInfo(samil_font)
+    play_info = play.PlayInfo(font, samil_font)
     play_info_group = pygame.sprite.Group()
     play_info_group.add(play_info)
     play_info_group.update()
 
     # 卡牌详情展示
-    card_info = card.Card(samil_font)
+    card_info = card.Card(font, samil_font)
     card_info_group = pygame.sprite.Group()
     card_info_group.add(card_info)
     card_info_group.update()
 
     # 操作日志显示
     operate_group = pygame.sprite.Group()
-    operate_group.add(operate_log.OperateLog(samil_font))
+    operate_group.add(operate_log.OperateLog(font, samil_font))
 
     # 灵气潮汐：修炼速度加快
     reiki_event = pygame.USEREVENT + 5
