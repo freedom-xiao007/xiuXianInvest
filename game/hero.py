@@ -362,7 +362,5 @@ def reset():
         hero_set.Hero_groups.add(hero)
 
 
-Heroes = create_heroes()
-Hero_groups = pygame.sprite.Group()
-for hero in Heroes:
-    Hero_groups.add(hero)
+Heroes = []
+Hero_groups = None

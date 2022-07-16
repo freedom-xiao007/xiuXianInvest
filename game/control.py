@@ -19,7 +19,6 @@ game_pre_stamp = None
 
 def start():
     fps = 20
-    pygame.init()
     win_size = (config.WIN_WIDTH, config.WIN_HEIGHT)
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
