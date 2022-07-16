@@ -1,3 +1,5 @@
+import pygame.sprite
+
 from common.five_element import FiveElementType
 from common import config
 from common import five_element
@@ -5,8 +7,15 @@ from game import land
 from common import xiuxian_state
 
 
-class Hero:
+class Hero(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, five_element: FiveElementType):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((40, 40))
+        pygame.draw.circle(self.image, five_element.value["color"], (x, y), 15, 2)
+        self.rect = self.image.get_rect()
+        self.rect.x = x - 15
+        self.rect.y = y - 20
+        self.collide_type = "hero"
         self.x = x
         self.y = y
         self.five_element = five_element
@@ -74,3 +83,6 @@ def update_exp():
 
 
 Heroes = create_heroes()
+Hero_groups = pygame.sprite.Group()
+for hero in Heroes:
+    Hero_groups.add(hero)

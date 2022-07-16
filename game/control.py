@@ -2,18 +2,9 @@ import sys
 
 import pygame
 
-import common.color
 import game.land
 from game import hero
 from common import xiuxian_state
-
-
-class Number(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.rect.Rect(0, 0, 50, 50)
-        self.image.fill((255, 255, 255))
-        self.rect = self.image.get_rect()
 
 
 def start():
@@ -41,7 +32,8 @@ def start():
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == hero_exp_event:
-                hero.update_exp()
+                # hero.update_exp()
+                hero.Hero_groups.update()
 
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
@@ -57,8 +49,10 @@ def start():
             type_pos = five_element.get_rect(center=(item.x + 75, item.y + 15))
             screen.blit(five_element, type_pos)
 
+        hero.Hero_groups.draw(surface2)
+
         for item in hero.Heroes:
-            pygame.draw.circle(surface2, item.five_element.value["color"], (item.x, item.y), 15, 2)
+            # pygame.draw.circle(surface2, item.five_element.value["color"], (item.x, item.y), 15, 2)
 
             five_element = font.render(item.five_element.value["type"], True, (255, 10, 10))
             type_pos = five_element.get_rect(center=(item.x, item.y))

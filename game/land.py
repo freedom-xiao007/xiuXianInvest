@@ -1,7 +1,5 @@
 import random
 
-import pygame
-
 import common.config
 from common.five_element import FiveElementType
 from common import five_element
