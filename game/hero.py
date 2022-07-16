@@ -50,6 +50,7 @@ class Hero:
             else:
                 self.is_top = True
                 self.state = self.state - 1
+                self.level = xiuxian_state.State[self.state]["level"]
                 break
 
 
@@ -65,6 +66,11 @@ def create_heroes():
     for item in list:
         print((item.x, item.y))
     return list
+
+
+def update_exp():
+    for item in Heroes:
+        item.update()
 
 
 Heroes = create_heroes()

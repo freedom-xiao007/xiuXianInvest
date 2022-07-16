@@ -18,7 +18,7 @@ class Number(pygame.sprite.Sprite):
 
 def start():
     pygame.init()
-    fps = 1
+    fps = 60
     win_size = (600, 600)
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
@@ -30,18 +30,24 @@ def start():
     font = pygame.font.SysFont("SimHei", 20)
     samil_font = pygame.font.SysFont("SimHei", 10)
 
+    # 角色修炼事件
+    hero_exp_event = pygame.USEREVENT + 1
+    pygame.time.set_timer(hero_exp_event, 1000)
+
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == hero_exp_event:
+                hero.update_exp()
 
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
 
         for item in game.land.Lands:
-            pygame.draw.rect(surface2, item.five_element.value["color"], (item.x, item.y, item.length, item.length), 5)
+            pygame.draw.rect(surface2, item.five_element.value["color"], (item.x, item.y, item.length, item.length), 3)
 
             number = font.render(str(item.index), True, (255, 10, 10))
             text_pos = number.get_rect(center=(item.x + 15, item.y + 15))
@@ -52,9 +58,7 @@ def start():
             screen.blit(five_element, type_pos)
 
         for item in hero.Heroes:
-            item.update()
-
-            pygame.draw.circle(surface2, item.five_element.value["color"], (item.x, item.y), 15, 3)
+            pygame.draw.circle(surface2, item.five_element.value["color"], (item.x, item.y), 15, 2)
 
             five_element = font.render(item.five_element.value["type"], True, (255, 10, 10))
             type_pos = five_element.get_rect(center=(item.x, item.y))
