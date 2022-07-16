@@ -69,6 +69,9 @@ def start():
             if event.type == play_info_event:
                 play_info_group.update()
 
+        if is_end():
+            break
+
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
 
@@ -95,3 +98,13 @@ def start():
         screen.blit(surface2, (0, 0))
         pygame.display.flip()
         clock.tick(fps)
+
+
+def is_end():
+    alive = 0
+    for item in hero.Heroes:
+        if item.alive:
+            alive = alive + 1
+    if alive <= 1:
+        return True
+    return False

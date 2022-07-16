@@ -34,7 +34,7 @@ def get_rank_info():
     for item in hero.Heroes:
         if not item.alive:
             continue
-        key = "%d %s%d层" % (item.index, xiuxian_state.State[item.state]["name"], item.level)
+        key = "%d %s %s%d层" % (item.index, item.name, xiuxian_state.State[item.state]["name"], item.level)
         rank[key] = "%d:%d" % (item.state, item.level)
 
     info = []

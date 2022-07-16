@@ -9,6 +9,147 @@ from game import land
 from common import xiuxian_state
 
 
+hero_names = [
+    "东皇",
+    "太一",
+    "昊天",
+    "女娲",
+    "伏羲",
+    "神农",
+    "轩辕",
+    "句龙",
+    "祝融",
+    "共工",
+    "飞廉",
+    "夸父",
+    "蚩尤",
+    "刑天",
+    "仓颉",
+    "喾",
+    "尧",
+    "舜",
+    "禹",
+    "后羿",
+    "羲和",
+    "嫦娥",
+    "常羲",
+    "应龙",
+    "女魃",
+    "旱魃",
+    "烛龙",
+    "元始",
+    "通天",
+    "太上",
+    "紫微",
+    "青华",
+    "西王母",
+    "东王公",
+    "真武",
+    "玉虚",
+    "佑圣",
+    "斗姆",
+    "汉锺离",
+    "吕洞宾",
+    "张果老",
+    "韩湘子",
+    "铁拐李",
+    "何仙姑",
+    "蓝采和",
+    "曹国舅",
+    "鬼谷子",
+    "张道陵",
+    "许逊",
+    "葛玄",
+    "萨守坚",
+    "魏伯阳",
+    "魏华存",
+    "葛洪",
+    "寇谦之",
+    "陆修静",
+    "郭璞",
+    "陶弘景",
+    "王文卿",
+    "刘海蟾",
+    "张伯端",
+    "王重阳",
+    "丘处机",
+    "张三丰",
+    "太白",
+    "毕方",
+    "二郎神",
+    "赵公明",
+    "温元帅",
+    "康元帅",
+    "马天君",
+    "王天君",
+    "钟馗",
+    "孟婆",
+    "陆压",
+    "接引",
+    "准提",
+    "广成子",
+    "赤精子",
+    "云中子",
+    "雷震子",
+    "韦护",
+    "李靖",
+    "金吒",
+    "木吒",
+    "哪吒",
+    "牛郎",
+    "织女",
+    "千里眼",
+    "顺风耳",
+    "月老",
+    "镇元大仙",
+    "菩提祖师",
+    "天蓬",
+    "卷帘",
+    "三藏",
+    "孙悟空",
+    "牛魔王",
+    "蛟魔王",
+    "鹏魔王",
+    "狮狔王",
+    "猕猴王",
+    "禺狨王",
+    "六耳",
+    "鲲鹏",
+    "白泽",
+    "石矶",
+    "太乙",
+    "姜尚",
+    "申公豹",
+    "云霄",
+    "碧霄",
+    "琼霄",
+    "金光仙",
+    "乌云仙",
+    "毗卢仙",
+    "灵牙仙",
+    "虬首仙",
+    "金箍仙",
+    "定光仙",
+    "多宝道人",
+    "金灵圣母",
+    "无当圣母",
+    "龟灵圣母",
+    "秦完",
+    "赵江",
+    "董全",
+    "袁角",
+    "金光圣母",
+    "孙良",
+    "白礼",
+    "姚宾",
+    "王奕",
+    "张绍",
+    "九曜星官",
+    "闻仲",
+    "鸿均",
+]
+
+
 class Hero(pygame.sprite.Sprite):
     def __init__(self, index: int, x: int, y: int, five_element: FiveElementType):
         pygame.sprite.Sprite.__init__(self)
@@ -33,6 +174,9 @@ class Hero(pygame.sprite.Sprite):
         self.index = index
         self.bleed = 100
         self.alive = True
+        self.name = "无名"
+        if self.index < len(hero_names):
+            self.name = hero_names[self.index]
 
     def update(self):
         if self.is_moving:
@@ -49,6 +193,8 @@ class Hero(pygame.sprite.Sprite):
             log = font.render(self.log, True, (0, 255, 0))
             self.image.blit(log, [0, 0])
 
+        name = font.render(self.name, True, (255, 0, 0), (0, 0, 0))
+        self.image.blit(name, [15, 35])
         pygame.draw.circle(self.image, self.five_element.value["color"], (25, 40), self.radius, 2)
 
     def moving(self):
@@ -84,9 +230,11 @@ class Hero(pygame.sprite.Sprite):
         self.log = ""
 
         y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
-        i = int((self.x - 50 - config.LEFT_WIDTH) / config.UNIT_LENGTH)
-        j = int((self.y - 75) / config.UNIT_LENGTH)
+        i = int((self.rect.x - 50 - 20 - config.LEFT_WIDTH) / config.UNIT_LENGTH)
+        j = int((self.rect.y - 75 - 30) / config.UNIT_LENGTH)
         land_index = i * y_count + j
+        if land_index >= len(land.Lands):
+            return
         cur_land = land.Lands[land_index]
         add_exp = cur_land.exp
         if self.five_element == cur_land.five_element:
