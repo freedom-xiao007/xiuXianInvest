@@ -38,7 +38,7 @@ def start():
     pygame.time.set_timer(hero_move_event, 1000 * 30)
 
     # 游戏角色排行榜
-    hero_ranking = hero_ranking_list.HeroRankingList(samil_font)
+    hero_ranking = hero_ranking_list.HeroRankingList(font, samil_font)
     hero_ranking_group = pygame.sprite.Group()
     hero_ranking_group.add(hero_ranking)
 
@@ -190,5 +190,5 @@ def get_win_hero():
         if top < 0:
             break
         top = top - 1
-        info += "第%d名：%s %s;" % (top, rank[key].name, xiuxian_state.State[rank[key].state])
+        info += "第%d名：%s %s;" % (top, rank[key].name, xiuxian_state.State[rank[key].state]["name"])
     return info

@@ -1,32 +1,29 @@
 import pygame.sprite
 from game import hero
 from common import xiuxian_state
+from common import color
 
 
 class HeroRankingList(pygame.sprite.Sprite):
-    def __init__(self, font):
+    def __init__(self, big_font, small_font):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((250, 400))
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
-        self.font = font
-
-        self.title = font.render("当前游戏修士排行榜", True, (255, 0, 0), (0, 0, 0))
-        self.image.blit(self.title, [40, 5])
-
-        self.info = font.render("当前无排行信息", True, (255, 0, 0), (0, 0, 0))
-        self.image.blit(self.info, [10, 25])
+        self.big_font = big_font
+        self.small_font = small_font
+        self.update()
 
     def update(self):
-        self.image.fill((0, 0, 0))
-        self.title = self.font.render("当前游戏修士排行榜", True, (255, 0, 0), (0, 0, 0))
-        self.image.blit(self.title, [40, 5])
+        self.image.fill(color.BLUE1)
+        self.title = self.big_font.render("当前游戏修士排行榜", True, color.WHITE, color.GREEN1)
+        self.image.blit(self.title, [30, 2])
 
         rank_info = get_rank_info()
         for i in range(len(rank_info)):
-            t = self.font.render(str(i + 1) + " " + rank_info[i], True, (255, 0, 0), (0, 0, 0))
-            self.image.blit(t, [10, 25 * (i + 1)])
+            t = self.small_font.render(str(i + 1) + " " + rank_info[i], True, color.WHITE, color.BLUE1)
+            self.image.blit(t, [10, 26 * (i + 1)])
 
 
 def get_rank_info():

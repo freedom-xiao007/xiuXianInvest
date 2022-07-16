@@ -5,9 +5,9 @@
 ### 资源
 - [字节图标库](https://iconpark.oceanengine.com/official)
 - [image](https://pixabay.com/zh/images/search/)
+- [颜色代码表](http://www.360doc.com/content/12/0229/16/605353_190576827.shtml)
 
 ### 其他
-- [颜色代码表](http://www.360doc.com/content/12/0229/16/605353_190576827.shtml)
 - [Python 修改 pip 源为国内源](https://zhuanlan.zhihu.com/p/109939711)
 - [第084讲: Pygame：基本图形绘制 | 学习记录（小甲鱼零基础入门学习Python）](https://blog.csdn.net/qq_38970783/article/details/89242624)
 - [Python枚举类定义和使用（详解版）](http://c.biancheng.net/view/2305.html)
