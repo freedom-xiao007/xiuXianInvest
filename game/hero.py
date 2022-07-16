@@ -32,6 +32,8 @@ class Hero(pygame.sprite.Sprite):
         self.target_y = None
         self.speed = 1
         self.index = index
+        self.bleed = 100
+        self.alive = True
 
     def update(self):
         if self.is_moving:
@@ -105,7 +107,49 @@ class Hero(pygame.sprite.Sprite):
             if target.collide_type == 'hero':
                 if self.index == target.index:
                     return
-                # print("发生碰撞")
+                cur_hero = "%s%d层" % (xiuxian_state.State[self.state]["name"], self.level)
+                target_hero = "%s%d层" % (xiuxian_state.State[target.state]["name"], target.level)
+                print("发生碰撞:", self.index, target.index, cur_hero, target_hero)
+                self.fire(target)
+
+    def fire(self, target):
+        if self.state < target.state:
+            reduce = random.randint(0, 10) * (target.state - self.state)
+            self.bleed = self.bleed - reduce
+            print(self.index, "不敌", target.index, "，减血：", reduce)
+        elif self.state > target.state:
+            reduce = random.randint(0, 10) * (self.state - target.state)
+            target.bleed = target.bleed - reduce
+            print(target.index, "不敌", self.index, "，减血：", reduce)
+        elif self.state == target.state:
+            if self.level <= target.level:
+                reduce = random.randint(0, 10)
+                self.bleed = self.bleed - reduce
+                print(self.index, "不敌", target.index, "，减血：", reduce)
+            else:
+                reduce = random.randint(0, 10)
+                target.bleed = target.bleed - reduce
+                print(target.index, "不敌", self.index, "，减血：", reduce)
+
+        dead_check(self)
+        dead_check(target)
+
+
+def dead_check(hero: Hero):
+    if hero.bleed < 1:
+        if random.randint(0, 10) < 5:
+            hero.kill()
+            hero.alive = False
+            print(hero.index, "被击杀")
+        else:
+            if hero.state > 1:
+                hero.state = hero.state - 1
+        x_count = int(config.WIN_WIDTH / config.UNIT_LENGTH)
+        y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
+        random_x = random.randint(0, x_count - 1) * config.UNIT_LENGTH + 30
+        random_y = random.randint(0, y_count - 1) * config.UNIT_LENGTH + 55
+        hero.target_x = random_x
+        hero.target_y = random_y
 
 
 def create_heroes():
@@ -124,9 +168,10 @@ def random_move():
     x_count = int(config.WIN_WIDTH / config.UNIT_LENGTH)
     y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
     for item in Heroes:
+        if not item.alive:
+            continue
         random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 30
         random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 55
-        print("random:", random_x, random_y)
         item.is_moving = True
         item.target_x = random_x
         item.target_y = random_y
@@ -134,11 +179,15 @@ def random_move():
 
 def update_exp():
     for item in Heroes:
+        if not item.alive:
+            continue
         item.get_exp()
 
 
 def collide():
     for item in Heroes:
+        if not item.alive:
+            continue
         item.collide(Hero_groups)
 
 
