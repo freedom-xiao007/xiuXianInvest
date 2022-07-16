@@ -4,7 +4,6 @@ import pygame
 
 import game.land
 from game import hero
-from common import xiuxian_state
 from common import config
 from game import hero_ranking_list
 from game import play
@@ -19,10 +18,6 @@ def start():
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
 
-    # number_group = pygame.sprite.Group()
-    # number_group.add()
-
-    # font = pygame.font.Font(None, 20)
     font = pygame.font.SysFont("SimHei", 20)
     samil_font = pygame.font.SysFont("SimHei", 10)
 
@@ -66,9 +61,9 @@ def start():
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == hero_move_event:
-                hero.random_move()
+                hero.random_move(samil_font)
             elif event.type == hero_exp_event:
-                hero.update_exp()
+                hero.update_exp(samil_font)
             if event.type == hero_rank_event:
                 hero_ranking.update()
             if event.type == play_info_event:
@@ -91,21 +86,6 @@ def start():
         hero.Hero_groups.update()
         hero.collide()
         hero.Hero_groups.draw(surface2)
-
-        for item in hero.Heroes:
-            five_element = font.render(item.five_element.value["type"], True, (255, 10, 10))
-            type_pos = five_element.get_rect(center=(item.x, item.y))
-            screen.blit(five_element, type_pos)
-
-            state_str = "%s%d层" % (xiuxian_state.State[item.state]["name"], item.level)
-            state = samil_font.render(state_str, True, (255, 10, 10))
-            state_pos = five_element.get_rect(center=(item.x - 10, item.y - 20))
-            screen.blit(state, state_pos)
-
-            if item.log != "":
-                log = samil_font.render(item.log, True, (0, 0, 0))
-                log_pos = five_element.get_rect(center=(item.x - 20, item.y - 30))
-                screen.blit(log, log_pos)
 
         hero_ranking_group.draw(surface2)
         play_info_group.draw(surface2)

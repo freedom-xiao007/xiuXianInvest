@@ -12,12 +12,11 @@ from common import xiuxian_state
 class Hero(pygame.sprite.Sprite):
     def __init__(self, index: int, x: int, y: int, five_element: FiveElementType):
         pygame.sprite.Sprite.__init__(self)
-        self.radius = 15
-        self.image = pygame.Surface((40, 40))
-        pygame.draw.circle(self.image, five_element.value["color"], (x, y), self.radius, 2)
+        self.radius = 10
+        self.image = pygame.Surface((50, 50))
         self.rect = self.image.get_rect()
-        self.rect.x = x - 15
-        self.rect.y = y - 20
+        self.rect.x = x - 20
+        self.rect.y = y - 30
         self.collide_type = "hero"
         self.x = x
         self.y = y
@@ -38,6 +37,19 @@ class Hero(pygame.sprite.Sprite):
     def update(self):
         if self.is_moving:
             self.moving()
+
+    def update_info(self, font):
+        self.image.fill((255, 255, 255, 0))
+
+        state_str = "%s%d层" % (xiuxian_state.State[self.state]["name"], self.level)
+        title = font.render(state_str, True, (255, 0, 0), (0, 0, 0))
+        self.image.blit(title, [0, 20])
+
+        if self.log != "":
+            log = font.render(self.log, True, (0, 255, 0))
+            self.image.blit(log, [0, 0])
+
+        pygame.draw.circle(self.image, self.five_element.value["color"], (25, 40), self.radius, 2)
 
     def moving(self):
         x_direct = 1
@@ -65,7 +77,7 @@ class Hero(pygame.sprite.Sprite):
         elif self.rect.y + self.radius > config.WIN_HEIGHT:
             self.rect.y = config.WIN_HEIGHT - self.radius
 
-    def get_exp(self):
+    def get_exp(self, font):
         if self.is_top or self.is_moving:
             return
 
@@ -100,6 +112,9 @@ class Hero(pygame.sprite.Sprite):
                 self.state = self.state - 1
                 self.level = xiuxian_state.State[self.state]["level"]
                 break
+
+        self.bleed = 100 * self.state
+        self.update_info(font)
 
     def collide(self, grp):
         if pygame.sprite.spritecollideany(self, grp):
@@ -164,24 +179,26 @@ def create_heroes():
     return list
 
 
-def random_move():
+def random_move(font):
     x_count = int((config.WIN_WIDTH - config.LEFT_WIDTH - config.RIGHT_WIDTH) / config.UNIT_LENGTH)
     y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
     for item in Heroes:
         if not item.alive:
             continue
         random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 30 + config.LEFT_WIDTH
-        random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 55
+        random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 45
         item.is_moving = True
+        item.log = ""
+        item.update_info(font)
         item.target_x = random_x
         item.target_y = random_y
 
 
-def update_exp():
+def update_exp(font):
     for item in Heroes:
         if not item.alive:
             continue
-        item.get_exp()
+        item.get_exp(font)
 
 
 def collide():
