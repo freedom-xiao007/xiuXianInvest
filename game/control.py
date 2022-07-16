@@ -9,6 +9,7 @@ from common import config
 from game import hero_ranking_list
 from game import play
 from game import card
+from game import operate_log
 
 
 def start():
@@ -53,6 +54,10 @@ def start():
     card_info_group = pygame.sprite.Group()
     card_info_group.add(card_info)
     card_info_group.update()
+
+    # 操作日志显示
+    operate_group = pygame.sprite.Group()
+    operate_group.add(operate_log.OperateLog(samil_font))
 
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
@@ -105,6 +110,7 @@ def start():
         hero_ranking_group.draw(surface2)
         play_info_group.draw(surface2)
         card_info_group.draw(surface2)
+        operate_group.draw(surface2)
 
         screen.blit(surface2, (0, 0))
         pygame.display.flip()

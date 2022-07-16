@@ -6,8 +6,8 @@ class Card(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((250, 400))
         self.rect = self.image.get_rect()
-        self.rect.x = 1655
-        self.rect.y = 0
+        self.rect.x = 0
+        self.rect.y = 450
         self.font = font
 
     def update(self):

@@ -8,8 +8,8 @@ class PlayInfo(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((250, 400))
         self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 450
+        self.rect.x = 1655
+        self.rect.y = 0
         self.font = font
         self.show_player_rank = False
 
@@ -40,6 +40,7 @@ class PlayInfo(pygame.sprite.Sprite):
             "如：j12.2 对东皇太一使用修炼卡",
             "对角色使用卡牌：d + 区域编号 + . + 卡牌编号",
             "如：d23.3 对区域23使用地形卡",
+            "查询当前投资的角色(结果在右下角窗口)：s"
         ]
         for i in range(len(info)):
             t = self.font.render(info[i], True, (255, 0, 0), (0, 0, 0))
