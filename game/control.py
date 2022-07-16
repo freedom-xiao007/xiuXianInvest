@@ -1,4 +1,5 @@
 import sys
+import time
 
 import pygame
 
@@ -11,9 +12,13 @@ from game import card
 from game import operate_log
 
 
+end_game_stamp = None
+game_pre_stamp = None
+
+
 def start():
-    pygame.init()
     fps = 60
+    pygame.init()
     win_size = (config.WIN_WIDTH, config.WIN_HEIGHT)
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
@@ -27,7 +32,7 @@ def start():
 
     # 角色气运劫：角色开始移动，期间膨胀发送战斗
     hero_move_event = pygame.USEREVENT + 2
-    pygame.time.set_timer(hero_move_event, 1000 * 10)
+    pygame.time.set_timer(hero_move_event, 1000 * 3)
 
     # 游戏角色排行榜
     hero_rank_event = pygame.USEREVENT + 3
@@ -56,6 +61,7 @@ def start():
 
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,11 +75,16 @@ def start():
             if event.type == play_info_event:
                 play_info_group.update()
 
-        if is_end():
-            break
-
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
+
+        if game.control.game_pre_stamp is not None:
+            pre_game(screen, surface2, font, clock, fps)
+            continue
+
+        if is_end():
+            end(screen, surface2, font, clock, fps)
+            continue
 
         for item in game.land.Lands:
             pygame.draw.rect(surface2, item.five_element.value["color"], (item.x, item.y, item.length, item.length), 3)
@@ -100,6 +111,28 @@ def start():
         clock.tick(fps)
 
 
+def pre_game(screen, surface2, font, clock, fps):
+    interval = int(time.time()) - int(game.control.game_pre_stamp)
+    if interval > 30:
+        game.control.game_pre_stamp = None
+        hero.reset()
+
+    text = [
+        "新的轮回开始了，当前阶段盲选，成功登顶后，奖励翻10倍",
+        "输入 t + 角色编号进行投资吧",
+        "当前角色编号范围：0-125",
+        "%d秒后，开始游戏" % (30-interval),
+    ]
+    for i in range(len(text)):
+        end_info = font.render(text[i], True, (255, 10, 10))
+        text_pos = end_info.get_rect(center=(800, 400 + 20 * i))
+        screen.blit(end_info, text_pos)
+
+    screen.blit(surface2, (0, 0))
+    pygame.display.flip()
+    clock.tick(fps)
+
+
 def is_end():
     alive = 0
     for item in hero.Heroes:
@@ -108,3 +141,30 @@ def is_end():
     if alive <= 1:
         return True
     return False
+
+
+def end(screen, surface2, font, clock, fps):
+    if game.control.end_game_stamp is None:
+        game.control.end_game_stamp = time.time()
+    elif int(time.time()) - int(game.control.end_game_stamp) > 5:
+        game.control.game_pre_stamp = time.time()
+
+    text = [
+        "此轮游戏结束，将开始下次轮回",
+        "修仙之巅：" + get_win_hero(),
+    ]
+    for i in range(len(text)):
+        end_info = font.render(text[i], True, (255, 10, 10))
+        text_pos = end_info.get_rect(center=(800, 400 + 20 * i))
+        screen.blit(end_info, text_pos)
+
+    screen.blit(surface2, (0, 0))
+    pygame.display.flip()
+    clock.tick(fps)
+
+
+def get_win_hero():
+    for item in hero.Heroes:
+        if item.alive:
+            return item.name
+    return ""

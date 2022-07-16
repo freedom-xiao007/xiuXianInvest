@@ -7,6 +7,7 @@ from common import config
 from common import five_element
 from game import land
 from common import xiuxian_state
+from game import hero as hero_set
 
 
 hero_names = [
@@ -170,7 +171,7 @@ class Hero(pygame.sprite.Sprite):
         self.is_moving = False
         self.target_x = None
         self.target_y = None
-        self.speed = 1
+        self.speed = 3
         self.index = index
         self.bleed = 100
         self.alive = True
@@ -354,6 +355,16 @@ def collide():
         if not item.alive:
             continue
         item.collide(Hero_groups)
+
+
+def reset():
+    for item in hero_set.Heroes:
+        item.kill()
+    hero_set.Heroes.clear()
+    hero_set.Heroes = create_heroes()
+    hero_set.Hero_groups = pygame.sprite.Group()
+    for hero in hero_set.Heroes:
+        hero_set.Hero_groups.add(hero)
 
 
 Heroes = create_heroes()
