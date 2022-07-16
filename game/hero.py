@@ -72,7 +72,7 @@ class Hero(pygame.sprite.Sprite):
         self.log = ""
 
         y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
-        i = int((self.x - 50) / config.UNIT_LENGTH)
+        i = int((self.x - 50 - config.LEFT_WIDTH) / config.UNIT_LENGTH)
         j = int((self.y - 75) / config.UNIT_LENGTH)
         land_index = i * y_count + j
         cur_land = land.Lands[land_index]
@@ -153,24 +153,24 @@ def dead_check(hero: Hero):
 
 
 def create_heroes():
-    x_count = int(config.WIN_WIDTH / config.UNIT_LENGTH)
+    x_count = int((config.WIN_WIDTH - config.LEFT_WIDTH - config.RIGHT_WIDTH) / config.UNIT_LENGTH)
     y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
     list = []
     for i in range(x_count):
         for j in range(y_count):
-            x = i * config.UNIT_LENGTH + 50
+            x = i * config.UNIT_LENGTH + 50 + config.LEFT_WIDTH
             y = j * config.UNIT_LENGTH + 75
             list.append(Hero(i * y_count + j, x, y, five_element.get_random_five_element()))
     return list
 
 
 def random_move():
-    x_count = int(config.WIN_WIDTH / config.UNIT_LENGTH)
+    x_count = int((config.WIN_WIDTH - config.LEFT_WIDTH - config.RIGHT_WIDTH) / config.UNIT_LENGTH)
     y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
     for item in Heroes:
         if not item.alive:
             continue
-        random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 30
+        random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 30 + config.LEFT_WIDTH
         random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 55
         item.is_moving = True
         item.target_x = random_x

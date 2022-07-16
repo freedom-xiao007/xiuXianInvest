@@ -14,3 +14,4 @@
 - [Python：如何在Pygame中使用中文](https://blog.csdn.net/wangzirui32/article/details/116100759)
 - [Youtirsin/pygame-samples](https://github.com/Youtirsin/pygame-samples)
 - [Pygame(十七)定时器](jianshu.com/p/b1017b1c10b8)
+- [Pygame remove a single sprite from a group](https://stackoverflow.com/questions/40632424/pygame-remove-a-single-sprite-from-a-group)
