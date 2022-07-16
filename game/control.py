@@ -25,15 +25,20 @@ def start():
     hero_exp_event = pygame.USEREVENT + 1
     pygame.time.set_timer(hero_exp_event, 1000)
 
+    # 角色气运劫：角色开始移动，期间膨胀发送战斗
+    hero_move_event = pygame.USEREVENT + 2
+    pygame.time.set_timer(hero_move_event, 1000 * 3)
+
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == hero_move_event:
+                hero.random_move()
             elif event.type == hero_exp_event:
-                # hero.update_exp()
-                hero.Hero_groups.update()
+                hero.update_exp()
 
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
@@ -49,6 +54,7 @@ def start():
             type_pos = five_element.get_rect(center=(item.x + 75, item.y + 15))
             screen.blit(five_element, type_pos)
 
+        hero.Hero_groups.update()
         hero.Hero_groups.draw(surface2)
 
         for item in hero.Heroes:
