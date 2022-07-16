@@ -16,7 +16,8 @@ class Land:
         self.length = LAND_LENGTH - INTERVAL
         self.five_element = five_element
         self.index = index
-        self.exp = random.randint(1, 10)
+        self.level = 1
+        self.exp = random.randint(1, 10) * self.level
 
 
 def create_lands():
@@ -31,6 +32,18 @@ def create_lands():
     for item in nodes:
         print((item.index, item.x, item.y, item.length))
     return nodes
+
+
+def upgrade():
+    for item in Lands:
+        item.level = item.level + 1
+        item.exp = random.randint(1, 100) * item.level
+
+
+def reset():
+    for item in Lands:
+        item.level = 1
+        item.exp = random.randint(0, 10)
 
 
 Lands = create_lands()

@@ -171,10 +171,11 @@ class Hero(pygame.sprite.Sprite):
         self.is_moving = False
         self.target_x = None
         self.target_y = None
-        self.speed = 3
+        self.speed = 1
         self.index = index
         self.bleed = 100
         self.alive = True
+        self.attack = 1 * self.level + 10 * self.state
         self.name = "无名"
         if self.index < len(hero_names):
             self.name = hero_names[self.index]
@@ -238,6 +239,7 @@ class Hero(pygame.sprite.Sprite):
             return
         cur_land = land.Lands[land_index]
         add_exp = cur_land.exp
+        print("add exp:", add_exp)
         if self.five_element == cur_land.five_element:
             add_exp = add_exp * 2
         self.exp = self.exp + add_exp
@@ -262,10 +264,11 @@ class Hero(pygame.sprite.Sprite):
                 self.level = xiuxian_state.State[self.state]["level"]
                 break
 
-        self.bleed = 100 * self.state
+        self.bleed = 1000 * (self.state + 1)
+        self.attack = 1 * self.level + 10 * self.state
         self.update_info(font)
 
-    def collide(self, grp):
+    def collide(self, grp, font):
         if pygame.sprite.spritecollideany(self, grp):
             target = pygame.sprite.spritecollideany(self, grp)
             if target.collide_type == 'hero':
@@ -274,34 +277,26 @@ class Hero(pygame.sprite.Sprite):
                 cur_hero = "%s%d层" % (xiuxian_state.State[self.state]["name"], self.level)
                 target_hero = "%s%d层" % (xiuxian_state.State[target.state]["name"], target.level)
                 print("发生碰撞:", self.index, target.index, cur_hero, target_hero)
-                self.fire(target)
+                self.fire(target, font)
 
-    def fire(self, target):
-        if self.state < target.state:
-            reduce = random.randint(0, 10) * (target.state - self.state)
-            self.bleed = self.bleed - reduce
-            print(self.index, "不敌", target.index, "，减血：", reduce)
-        elif self.state > target.state:
-            reduce = random.randint(0, 10) * (self.state - target.state)
-            target.bleed = target.bleed - reduce
-            print(target.index, "不敌", self.index, "，减血：", reduce)
-        elif self.state == target.state:
-            if self.level <= target.level:
-                reduce = random.randint(0, 10)
-                self.bleed = self.bleed - reduce
-                print(self.index, "不敌", target.index, "，减血：", reduce)
-            else:
-                reduce = random.randint(0, 10)
-                target.bleed = target.bleed - reduce
-                print(target.index, "不敌", self.index, "，减血：", reduce)
+    def fire(self, target, font):
+        reduce = random.randint(0, target.attack)
+        self.bleed = self.bleed - reduce
+        self.log = "血量-%d" % reduce
 
+        reduce = random.randint(0, self.attack)
+        target.bleed = target.bleed - reduce
+        target.log = "血量-%d" % reduce
+
+        self.update_info(font)
+        target.update_info(font)
         dead_check(self)
         dead_check(target)
 
 
 def dead_check(hero: Hero):
     if hero.bleed < 1:
-        if random.randint(0, 10) < 5:
+        if random.randint(0, 10) == 5:
             hero.kill()
             hero.alive = False
             print(hero.index, "被击杀")
@@ -350,11 +345,11 @@ def update_exp(font):
         item.get_exp(font)
 
 
-def collide():
+def collide(font):
     for item in Heroes:
         if not item.alive:
             continue
-        item.collide(Hero_groups)
+        item.collide(Hero_groups, font)
 
 
 def reset():

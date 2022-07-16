@@ -10,6 +10,7 @@ from game import hero_ranking_list
 from game import play
 from game import card
 from game import operate_log
+from common import xiuxian_state
 
 
 end_game_stamp = None
@@ -17,7 +18,7 @@ game_pre_stamp = None
 
 
 def start():
-    fps = 60
+    fps = 20
     pygame.init()
     win_size = (config.WIN_WIDTH, config.WIN_HEIGHT)
     screen = pygame.display.set_mode(win_size)
@@ -32,12 +33,10 @@ def start():
 
     # 角色气运劫：角色开始移动，期间膨胀发送战斗
     hero_move_event = pygame.USEREVENT + 2
-    pygame.time.set_timer(hero_move_event, 1000 * 3)
+    pygame.time.set_timer(hero_move_event, 1000 * 30)
 
     # 游戏角色排行榜
-    hero_rank_event = pygame.USEREVENT + 3
-    pygame.time.set_timer(hero_rank_event, 1000)
-    hero_ranking = hero_ranking_list.HeroRankingList(font)
+    hero_ranking = hero_ranking_list.HeroRankingList(samil_font)
     hero_ranking_group = pygame.sprite.Group()
     hero_ranking_group.add(hero_ranking)
 
@@ -59,6 +58,10 @@ def start():
     operate_group = pygame.sprite.Group()
     operate_group.add(operate_log.OperateLog(samil_font))
 
+    # 灵气潮汐：修炼速度加快
+    reiki_event = pygame.USEREVENT + 5
+    pygame.time.set_timer(reiki_event, 1000 * 5)
+
     surface2 = screen.convert_alpha()  # 关键是这里！！！
     clock = pygame.time.Clock()
 
@@ -70,10 +73,10 @@ def start():
                 hero.random_move(samil_font)
             elif event.type == hero_exp_event:
                 hero.update_exp(samil_font)
-            if event.type == hero_rank_event:
-                hero_ranking.update()
             if event.type == play_info_event:
                 play_info_group.update()
+            if event.type == reiki_event:
+                game.land.upgrade()
 
         screen.fill((255, 255, 255))
         surface2.fill((255, 255, 255, 0))
@@ -94,11 +97,16 @@ def start():
             screen.blit(number, text_pos)
 
             five_element = font.render(item.five_element.value["type"], True, (255, 10, 10))
-            type_pos = five_element.get_rect(center=(item.x + 75, item.y + 15))
+            type_pos = five_element.get_rect(center=(item.x + 15, item.y + 80))
             screen.blit(five_element, type_pos)
 
+            exp = samil_font.render("exp:" + str(item.exp), True, (255, 10, 10))
+            exp_pos = five_element.get_rect(center=(item.x + 60, item.y + 20))
+            screen.blit(exp, exp_pos)
+
+        hero_ranking.update()
         hero.Hero_groups.update()
-        hero.collide()
+        hero.collide(samil_font)
         hero.Hero_groups.draw(surface2)
 
         hero_ranking_group.draw(surface2)
@@ -116,6 +124,7 @@ def pre_game(screen, surface2, font, clock, fps):
     if interval > 30:
         game.control.game_pre_stamp = None
         hero.reset()
+        game.land.reset()
 
     text = [
         "新的轮回开始了，当前阶段盲选，成功登顶后，奖励翻10倍",
@@ -135,10 +144,14 @@ def pre_game(screen, surface2, font, clock, fps):
 
 def is_end():
     alive = 0
+    has_top = False
     for item in hero.Heroes:
         if item.alive:
             alive = alive + 1
-    if alive <= 1:
+            if item.state == (len(xiuxian_state.State) - 1):
+                has_top = True
+                break
+    if has_top or alive <= 1:
         return True
     return False
 
