@@ -30,7 +30,7 @@ if __name__ == '__main__':
     images = image_source.GameImageSource()
     images.load()
     land.Lands, land.Land_group = land.create_lands(images, font, samil_font)
-    hero.reset()
+    hero.Heroes, hero.Hero_groups = hero.create_heroes(images)
 
     game.control.start()
 

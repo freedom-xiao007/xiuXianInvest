@@ -7,12 +7,10 @@ from common import config
 from common import five_element
 from game import land
 from common import xiuxian_state
-from game import hero as hero_set
 
 
 hero_names = [
-    "东皇",
-    "太一",
+    "东皇太一",
     "昊天",
     "女娲",
     "伏羲",
@@ -41,14 +39,14 @@ hero_names = [
     "元始",
     "通天",
     "太上",
-    "紫微",
-    "青华",
+    "紫微大帝",
+    "青华大帝",
     "西王母",
     "东王公",
-    "真武",
-    "玉虚",
-    "佑圣",
-    "斗姆",
+    "真武大帝",
+    "玉虚真人",
+    "佑圣真人",
+    "斗姆帝君",
     "汉锺离",
     "吕洞宾",
     "张果老",
@@ -65,17 +63,7 @@ hero_names = [
     "魏伯阳",
     "魏华存",
     "葛洪",
-    "寇谦之",
-    "陆修静",
-    "郭璞",
-    "陶弘景",
-    "王文卿",
-    "刘海蟾",
-    "张伯端",
-    "王重阳",
-    "丘处机",
-    "张三丰",
-    "太白",
+    "太白金星",
     "毕方",
     "二郎神",
     "赵公明",
@@ -104,8 +92,8 @@ hero_names = [
     "月老",
     "镇元大仙",
     "菩提祖师",
-    "天蓬",
-    "卷帘",
+    "天蓬元帅",
+    "卷帘大将",
     "三藏",
     "孙悟空",
     "牛魔王",
@@ -152,13 +140,14 @@ hero_names = [
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, index: int, x: int, y: int, five_element: FiveElementType):
+    def __init__(self, index: int, x: int, y: int, five_element: FiveElementType, images):
         pygame.sprite.Sprite.__init__(self)
         self.radius = 10
-        self.image = pygame.Surface((50, 50))
+        self.img = images.get_all_alpha_img()
+        self.image = pygame.transform.scale(self.img, (60, 60))
         self.rect = self.image.get_rect()
-        self.rect.x = x - 20
-        self.rect.y = y - 30
+        self.rect.x = x - 10
+        self.rect.y = y - 40
         self.collide_type = "hero"
         self.x = x
         self.y = y
@@ -176,7 +165,9 @@ class Hero(pygame.sprite.Sprite):
         self.bleed = 100
         self.alive = True
         self.attack = 1 * self.level + 10 * self.state
+        self.is_attack = False
         self.name = "无名"
+        self.font = pygame.font.SysFont("SimHei", 10)
         if self.index < len(hero_names):
             self.name = hero_names[self.index]
 
@@ -187,17 +178,26 @@ class Hero(pygame.sprite.Sprite):
     def update_info(self, font):
         self.image.fill((255, 255, 255, 0))
 
+        color = self.five_element.value["color"]
+        pygame.draw.circle(self.image, color, (10, 50), self.radius, 10)
+
+        if self.five_element == five_element.FiveElementType.METAL:
+            color = (0, 0, 0)
+            number = self.font.render(str(self.index), True, (0, 0, 0))
+        else:
+            number = self.font.render(str(self.index), True, (255, 255, 255))
+        self.image.blit(number, [2, 45])
+
         state_str = "%s%d层" % (xiuxian_state.State[self.state]["name"], self.level)
-        title = font.render(state_str, True, (255, 0, 0), (0, 0, 0))
+        title = self.font.render(state_str, True, color)
         self.image.blit(title, [0, 20])
 
         if self.log != "":
-            log = font.render(self.log, True, (0, 255, 0))
+            log = font.render(self.log, True, color)
             self.image.blit(log, [0, 0])
 
-        name = font.render(self.name, True, (255, 0, 0), (0, 0, 0))
-        self.image.blit(name, [15, 35])
-        pygame.draw.circle(self.image, self.five_element.value["color"], (25, 40), self.radius, 2)
+        name = self.font.render(self.name, True, color)
+        self.image.blit(name, [20, 45])
 
     def moving(self):
         x_direct = 1
@@ -226,7 +226,7 @@ class Hero(pygame.sprite.Sprite):
             self.rect.y = config.WIN_HEIGHT - self.radius
 
     def get_exp(self, font):
-        if self.is_top or self.is_moving:
+        if self.is_top or self.is_moving or self.is_attack:
             return
 
         self.log = ""
@@ -269,6 +269,7 @@ class Hero(pygame.sprite.Sprite):
         self.update_info(font)
 
     def collide(self, grp, font):
+        self.is_attack = False
         if pygame.sprite.spritecollideany(self, grp):
             target = pygame.sprite.spritecollideany(self, grp)
             if target.collide_type == 'hero':
@@ -278,6 +279,7 @@ class Hero(pygame.sprite.Sprite):
                 target_hero = "%s%d层" % (xiuxian_state.State[target.state]["name"], target.level)
                 print("发生碰撞:", self.index, target.index, cur_hero, target_hero)
                 self.fire(target, font)
+                self.is_attack = True
 
     def fire(self, target, font):
         reduce = random.randint(0, target.attack)
@@ -311,16 +313,19 @@ def dead_check(hero: Hero):
         hero.target_y = random_y
 
 
-def create_heroes():
+def create_heroes(images):
     x_count = int((config.WIN_WIDTH - config.LEFT_WIDTH - config.RIGHT_WIDTH) / config.UNIT_LENGTH)
     y_count = int(config.WIN_HEIGHT / config.UNIT_LENGTH)
     list = []
+    group = pygame.sprite.Group()
     for i in range(x_count):
         for j in range(y_count):
             x = i * config.UNIT_LENGTH + 50 + config.LEFT_WIDTH
             y = j * config.UNIT_LENGTH + 75
-            list.append(Hero(i * y_count + j, x, y, five_element.get_random_five_element()))
-    return list
+            sprite = Hero(i * y_count + j, x, y, five_element.get_random_five_element(), images)
+            list.append(sprite)
+            group.add(sprite)
+    return list, group
 
 
 def random_move(font):
@@ -329,8 +334,8 @@ def random_move(font):
     for item in Heroes:
         if not item.alive:
             continue
-        random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 30 + config.LEFT_WIDTH
-        random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 45
+        random_x = random.randint(0, x_count-1) * config.UNIT_LENGTH + 40 + config.LEFT_WIDTH
+        random_y = random.randint(0, y_count-1) * config.UNIT_LENGTH + 35
         item.is_moving = True
         item.log = ""
         item.update_info(font)
@@ -352,15 +357,4 @@ def collide(font):
         item.collide(Hero_groups, font)
 
 
-def reset():
-    for item in hero_set.Heroes:
-        item.kill()
-    hero_set.Heroes.clear()
-    hero_set.Heroes = create_heroes()
-    hero_set.Hero_groups = pygame.sprite.Group()
-    for hero in hero_set.Heroes:
-        hero_set.Hero_groups.add(hero)
-
-
-Heroes = []
-Hero_groups = None
+Heroes, Hero_groups = [], None

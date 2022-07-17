@@ -31,3 +31,6 @@ class GameImageSource(object):
     def get_five_element_image(self, type: five_element.FiveElementType):
         self.load()
         return self.game_images_of_file_element[type]
+
+    def get_all_alpha_img(self):
+        return pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\alpha.png").convert_alpha()

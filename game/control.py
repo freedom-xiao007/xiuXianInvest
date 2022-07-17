@@ -11,6 +11,7 @@ from game import play
 from game import card
 from game import operate_log
 from common import xiuxian_state
+from common import image_source
 
 
 end_game_stamp = None
@@ -109,8 +110,10 @@ def pre_game(screen, surface2, font, clock, fps):
     interval = int(time.time()) - int(game.control.game_pre_stamp)
     if interval > 30:
         game.control.game_pre_stamp = None
-        hero.reset()
         game.land.reset()
+        images = image_source.GameImageSource()
+        images.load()
+        hero.Heroes, hero.Hero_groups = hero.create_heroes(images)
 
     text = [
         get_win_hero(),
