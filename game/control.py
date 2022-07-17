@@ -89,20 +89,7 @@ def start():
             game.control.game_pre_stamp = time.time()
             continue
 
-        for item in game.land.Lands:
-            pygame.draw.rect(screen, item.five_element.value["color"], (item.x, item.y, item.length, item.length), 3)
-
-            number = font.render(str(item.index), True, (255, 10, 10))
-            text_pos = number.get_rect(center=(item.x + 15, item.y + 15))
-            screen.blit(number, text_pos)
-
-            five_element = font.render(item.five_element.value["type"], True, (255, 10, 10))
-            type_pos = five_element.get_rect(center=(item.x + 15, item.y + 80))
-            screen.blit(five_element, type_pos)
-
-            exp = samil_font.render("exp:" + str(item.exp), True, (255, 10, 10))
-            exp_pos = five_element.get_rect(center=(item.x + 60, item.y + 20))
-            screen.blit(exp, exp_pos)
+        game.land.Land_group.draw(screen)
 
         hero_ranking.update()
         hero.Hero_groups.update()
