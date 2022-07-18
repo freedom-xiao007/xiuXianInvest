@@ -58,7 +58,8 @@ def start():
 
     # 操作日志显示
     operate_group = pygame.sprite.Group()
-    operate_group.add(operate_log.OperateLog(font, samil_font))
+    operate_win = operate_log.OperateLog(font, samil_font)
+    operate_group.add(operate_win)
 
     # 灵气潮汐：修炼速度加快
     reiki_event = pygame.USEREVENT + 5
@@ -94,6 +95,7 @@ def start():
 
         hero_ranking.update()
         hero.Hero_groups.update()
+        operate_group.update()
         hero.collide(samil_font)
         hero.Hero_groups.draw(screen)
 

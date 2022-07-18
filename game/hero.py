@@ -239,7 +239,6 @@ class Hero(pygame.sprite.Sprite):
             return
         cur_land = land.Lands[land_index]
         add_exp = cur_land.exp
-        print("add exp:", add_exp)
         if self.five_element == cur_land.five_element:
             add_exp = add_exp * 2
         self.exp = self.exp + add_exp
@@ -277,7 +276,7 @@ class Hero(pygame.sprite.Sprite):
                     return
                 cur_hero = "%s%d层" % (xiuxian_state.State[self.state]["name"], self.level)
                 target_hero = "%s%d层" % (xiuxian_state.State[target.state]["name"], target.level)
-                print("发生碰撞:", self.index, target.index, cur_hero, target_hero)
+                # print("发生碰撞:", self.index, target.index, cur_hero, target_hero)
                 self.fire(target, font)
                 self.is_attack = True
 
@@ -357,4 +356,21 @@ def collide(font):
         item.collide(Hero_groups, font)
 
 
+def add_hero_rel_player(hero_no, player_name):
+    if hero_no not in hero_rel_player:
+        hero_rel_player[hero_no] = []
+    if player_name not in hero_rel_player[hero_no]:
+        hero_rel_player[hero_no].append(player_name)
+
+
+def has_invest(player_name):
+    for hero_no in hero_rel_player:
+        for name in hero_rel_player[hero_no]:
+            if name == player_name:
+                if hero_no in Heroes and Heroes[hero_no].alive:
+                    return True, hero_names[hero_no]
+    return False, ""
+
+
+hero_rel_player = {}
 Heroes, Hero_groups = [], None

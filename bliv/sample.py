@@ -2,7 +2,10 @@
 import asyncio
 import random
 
-import blivedm
+import pika
+
+from bliv import blivedm
+from game import player_commond
 
 # 直播间ID的取值看直播间URL
 TEST_ROOM_IDS = [
@@ -65,12 +68,21 @@ class MyHandler(blivedm.BaseHandler):
     #     print(f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
     #           f" uname={command['data']['uname']}")
     # _CMD_CALLBACK_DICT['INTERACT_WORD'] = __interact_word_callback  # noqa
+    def __init__(self):
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue='test')  # 声明队列以向其发送消息消息
 
     async def _on_heartbeat(self, client: blivedm.BLiveClient, message: blivedm.HeartbeatMessage):
         print(f'[{client.room_id}] 当前人气值：{message.popularity}')
 
     async def _on_danmaku(self, client: blivedm.BLiveClient, message: blivedm.DanmakuMessage):
-        print(f'[{client.room_id}] {message.uname}：{message.msg}')
+        command = f'[{client.room_id}] {message.uname}：{message.msg}'
+        # self.channel.basic_publish(exchange='', routing_key='test', body=command)
+        self.channel.basic_publish(exchange='', routing_key='test', body="%d %s：%s" % (client.room_id, message.uname, message.msg))
+        print(command)
+        # res = player_commond.player_instance.exe_command(command)
+        # print(res)
 
     async def _on_gift(self, client: blivedm.BLiveClient, message: blivedm.GiftMessage):
         print(f'[{client.room_id}] {message.uname} 赠送{message.gift_name}x{message.num}'
@@ -85,3 +97,4 @@ class MyHandler(blivedm.BaseHandler):
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
+
