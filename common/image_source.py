@@ -15,11 +15,11 @@ class GameImageSource(object):
         self.game_images_of_file_element = {}
 
     def load(self):
-        metal = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\metal.png").convert_alpha()
-        wood = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\wood.png").convert_alpha()
-        water = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\water.png").convert_alpha()
-        fire = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\fire.png").convert_alpha()
-        earth = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\earth.png").convert_alpha()
+        metal = pygame.image.load(r".\img\metal.png").convert_alpha()
+        wood = pygame.image.load(r".\img\wood.png").convert_alpha()
+        water = pygame.image.load(r".\img\water.png").convert_alpha()
+        fire = pygame.image.load(r".\img\fire.png").convert_alpha()
+        earth = pygame.image.load(r".\img\earth.png").convert_alpha()
         self.game_images_of_file_element = {
             five_element.FiveElementType.METAL: metal,
             five_element.FiveElementType.WOOD: wood,
@@ -33,4 +33,4 @@ class GameImageSource(object):
         return self.game_images_of_file_element[type]
 
     def get_all_alpha_img(self):
-        return pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\alpha.png").convert_alpha()
+        return pygame.image.load(r".\img\alpha.png").convert_alpha()

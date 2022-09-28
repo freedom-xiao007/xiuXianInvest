@@ -24,7 +24,7 @@ def start():
     screen = pygame.display.set_mode(win_size)
     pygame.display.set_caption("修仙投资")
 
-    background = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\clouds-1282314__340.jpg")
+    background = pygame.image.load(r".\img\bg.jpg")
 
     font = pygame.font.SysFont("SimHei", 20)
     samil_font = pygame.font.SysFont("SimHei", 10)

@@ -6,7 +6,7 @@ from game import player_commond
 class OperateLog(pygame.sprite.Sprite):
     def __init__(self, big_font, small_font):
         pygame.sprite.Sprite.__init__(self)
-        img = pygame.image.load(r"C:\Users\lw\Pictures\Saved Pictures\alpha.png").convert_alpha()
+        img = pygame.image.load(r".\img\alpha.png").convert_alpha()
         self.image = pygame.transform.scale(img, (250, 420))
         self.rect = self.image.get_rect()
         self.rect.x = 1655
