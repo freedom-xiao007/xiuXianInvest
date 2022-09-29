@@ -5,7 +5,7 @@
 
 后面用pycharm，python版本用3.7以上即可
 
-游戏逻辑部分是基于pygame写的，获取直播间的弹幕不是用的B站的官方接口（初步尝试感觉不好用），为了快速做一个demo，用的一个大佬的：[xfgryujk/blivedm](https://github.com/xfgryujk/blivedm)
+游戏逻辑部分是基于pygame写的，获取直播间的弹幕不是直接用的B站的官方接口，为了快速做一个demo，用的一个大佬的：[xfgryujk/blivedm](https://github.com/xfgryujk/blivedm)
 
 ## 工程说明
 在B战看到弹幕游戏时的即兴之作，写完发现没啥意思，忘记整理完整上传工程了，导致后面老哥们说图片找不到，运行失败了,道具部分逻辑好像也没有保存过来.......
